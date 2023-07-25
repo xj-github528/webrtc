@@ -1,4 +1,11 @@
 <template>
+    <div class="transfer-box">
+        <div class="transfer">
+            <video src="" ref="v1" controls autoplay></video>
+            <video src="" ref="v2" controls autoplay></video>
+        </div>
+        <button @click="transfer">传输</button>
+    </div>
     <div class="demo">
         <div class="rtcBox">
             <ul>
@@ -209,13 +216,22 @@
                 // 保存本地流到全局
                 this.localstream = this.$refs['canvas'].captureStream();
                 this.initPeer(); // 获取到媒体流后，调用函数初始化 RTCPeerConnection
+            },
+            transfer() {
+                let stream = this.$refs['v1'].captureStream();
+                this.$refs['v2'].srcObject = stream;
             }
         },
         mounted() {
             this.$nextTick(() => {
                 // {mediaSource: 'screen'}
                 this.createMedia();
+                navigator.mediaDevices.getUserMedia({ audio: true, video: true }).then(stream => {
+                    this.$refs['v1'].srcObject = stream;
+                })
+
             });
+            
         }
     };
 </script>
@@ -236,6 +252,20 @@
         }
         ul{
             text-align: left;
+        }
+    }
+    .transfer{
+        display: flex;
+        justify-content: center;
+        video{
+            width: 480px;
+            height: 320px;
+            margin-left: 20px;
+        }
+    }
+    .transfer-box{
+        button{
+            margin: 10px;
         }
     }
 </style>
